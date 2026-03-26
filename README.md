@@ -75,28 +75,9 @@ Intercepts `webRequest.onAuthRequired` for private proxy authentication. Credent
 
 ---
 
-## 🚀 Installation
+## 🔒 Source Code
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/gajsin/porta-proxy.git
-   ```
-2. Open Chrome → `chrome://extensions/`
-3. Enable **Developer mode** (top right)
-4. Click **Load unpacked** → select the cloned folder
-5. Pin the extension to your toolbar
-
----
-
-## 📊 Stats
-
-| Metric | Value |
-|---|---|
-| External libraries | **0** |
-| Architecture | **Manifest V3** |
-| Bundle size | **< 1 MB** |
-| Proxy auth | **24/7 background** |
-
+> **Note:** This repository serves as a portfolio showcase. The full source code is closed/commercial, but the architecture and implementation details can be reviewed upon request during technical interviews.
 ---
 
 ## 📄 License
