@@ -11,6 +11,12 @@
 
 ---
 
+
+
+## 🎨 Project Presentation
+
+![Full Showcase](f_38169c5617235e33.png)
+
 ## 📸 Screenshots
 
 | Proxy Configuration | Domain Routing | Telemetry Log | FAQ Modal |
