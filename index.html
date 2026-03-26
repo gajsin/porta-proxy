@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porta Proxy — Премиальное Chrome-расширение</title>
+    <meta name="description"
+        content="Кейс: Премиальное Chrome-расширение для выборочной маршрутизации трафика (PAC-скрипты). Монобрендовый iOS-like UI на Vanilla JS.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ===== RESET & BASE ===== */
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Подстраиваемся под общую темную тему портфолио, но берем Coral как акцент */
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #121214;
+            --bg-card: #16161a;
+            --bg-card-hover: #1e1e24;
+            
+            --accent: #F47B6A; /* Porta Coral */
+            --accent-dim: #D66A59;
+            --accent-glow: rgba(244, 123, 106, 0.15);
+            --accent-glow-strong: rgba(244, 123, 106, 0.3);
+            
+            --text-primary: #f5f5f5;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            
+            --border: #27272a;
+            --border-light: #3f3f46;
+            
+            --gradient-accent: linear-gradient(135deg, #F47B6A 0%, #ffaba1 100%);
+            --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 40px rgba(244, 123, 106, 0.08);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== TOP BANNER ===== */
+        .top-banner {
+            background: var(--bg-secondary);
+            padding: 14px 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 2px solid var(--accent);
+        }
+
+        .top-banner h1 {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== CONTAINER ===== */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+        }
+
+        .hero-text h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: 56px;
+            font-weight: 900;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 24px;
+            color: #ffffff;
+        }
+
+        .hero-text .subtitle {
+            font-size: 17px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 32px;
+            max-width: 680px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .tech-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .tech-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #d4d4d8;
+            letter-spacing: 0.3px;
+            transition: all 0.3s ease;
+        }
+
+        .tech-badge:hover {
+            background: rgba(244, 123, 106, 0.1);
+            border-color: rgba(244, 123, 106, 0.3);
+            color: var(--accent);
+            transform: translateY(-1px);
+        }
+
+        /* ===== SECTION HEADERS ===== */
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2.5px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 32px;
+        }
+
+        .section-label::before {
+            content: '◆';
+            font-size: 8px;
+        }
+
+        /* ===== STATS ROW ===== */
+        .stats-section {
+            padding: 40px 0;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            text-align: center;
+            transition: all 0.35s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(244, 123, 106, 0.25);
+            box-shadow: 0 0 30px rgba(244, 123, 106, 0.06);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        /* ===== FEATURES SECTION ===== */
+        .features-section {
+            padding: 40px 0 60px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px 28px;
+            transition: all 0.35s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-accent);
+            opacity: 0;
+            transition: opacity 0.35s ease;
+        }
+
+        .feature-card:hover {
+            background: var(--bg-card-hover);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--accent-glow);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        .feature-card h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .feature-card p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.65;
+        }
+
+        /* ===== SCREENS SECTION ===== */
+        .screens-section {
+            padding: 40px 0 60px;
+        }
+
+        .screens-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            align-items: stretch;
+        }
+
+        .screen-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            transition: all 0.35s ease;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-card), var(--shadow-glow);
+            border-color: var(--accent);
+        }
+        
+        .screen-card img {
+            width: 100%;
+            aspect-ratio: 320 / 520;
+            object-fit: cover;
+            object-position: top;
+            border-radius: 8px;
+            display: block;
+            border: 1px solid var(--border-light);
+            background: #ffffff;
+        }
+
+        .screen-label {
+            padding: 16px 10px 6px;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-top: auto;
+        }
+
+        /* ===== ARCHITECTURE SECTION ===== */
+        .architecture-section {
+            padding: 40px 0 60px;
+        }
+
+        .arch-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .arch-card::before {
+            content: '';
+            position: absolute;
+            top: -100px;
+            right: -100px;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(244, 123, 106, 0.06), transparent 70%);
+            pointer-events: none;
+        }
+
+        .arch-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .arch-layer {
+            position: relative;
+        }
+
+        .arch-layer-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arch-layer-title::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            border-radius: 2px;
+            background: var(--accent);
+        }
+
+        .arch-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .arch-item:last-child {
+            border-bottom: none;
+        }
+
+        .arch-item-icon {
+            font-size: 16px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-left {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer-tech {
+            display: flex;
+            gap: 8px;
+        }
+
+        .footer-badge {
+            padding: 5px 12px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 11px;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate {
+            opacity: 0;
+            animation: fadeInUp 0.7s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .hero-text h2 {
+                font-size: 40px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .screens-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .arch-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+
+            .footer-tech {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .hero-text h2 {
+                font-size: 32px;
+            }
+            
+            .screens-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ===== TOP BANNER ===== -->
+    <div class="top-banner">
+        <h1>Porta Proxy — Премиальное Chrome-расширение</h1>
+    </div>
+
+    <!-- ===== HERO ===== -->
+    <div class="container">
+        <section class="hero">
+            <div class="hero-text animate delay-1">
+                <h2>Porta<br>Proxy</h2>
+                <p class="subtitle">
+                    Элитный инструмент для выборочной маршрутизации трафика (PAC). 
+                    Cinematic "1:1 Pixel Perfect" iOS-like интерфейс, Smart Paste, автообход блокировок и строгий монобрендинговый дизайн. Сделано без внешних зависимостей.
+                </p>
+                <div class="tech-badges">
+                    <span class="tech-badge">Vanilla JavaScript</span>
+                    <span class="tech-badge">Manifest V3</span>
+                    <span class="tech-badge">Service Workers</span>
+                    <span class="tech-badge">Proxy PAC Scripts</span>
+                    <span class="tech-badge">CSS Custom Properties</span>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== STATS ===== -->
+    <div class="container">
+        <section class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card animate delay-1">
+                    <div class="stat-value">0</div>
+                    <div class="stat-label">Внешних библиотек</div>
+                </div>
+                <div class="stat-card animate delay-2">
+                    <div class="stat-value">MV3</div>
+                    <div class="stat-label">Архитектура</div>
+                </div>
+                <div class="stat-card animate delay-3">
+                    <div class="stat-value">&lt;1MB</div>
+                    <div class="stat-label">Вес сборки</div>
+                </div>
+                <div class="stat-card animate delay-4">
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">Авторизация прокси</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== SCREENS ===== -->
+    <div class="container">
+        <section class="screens-section">
+            <div class="section-label animate">Интерфейс расширения</div>
+            <div class="screens-grid">
+                <div class="screen-card animate delay-1">
+                    <img src="1.png" alt="Скриншот настройки сети">
+                    <div class="screen-label">Конфигурация прокси</div>
+                </div>
+                <div class="screen-card animate delay-2">
+                    <img src="2.png" alt="Скриншот настройки правил">
+                    <div class="screen-label">Маршрутизация доменов</div>
+                </div>
+                <div class="screen-card animate delay-3">
+                    <img src="3.png" alt="Скриншот журнала">
+                    <div class="screen-label">Журнал телеметрии</div>
+                </div>
+                <div class="screen-card animate delay-4">
+                    <img src="4.png" alt="Скриншот FAQ и Onboarding">
+                    <div class="screen-label">FAQ Модал</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== FEATURES ===== -->
+    <div class="container">
+        <section class="features-section">
+            <div class="section-label animate">Ключевые возможности</div>
+            <div class="features-grid">
+                <div class="feature-card animate delay-1">
+                    <div class="feature-icon">🔀</div>
+                    <h3>PAC Маршрутизация</h3>
+                    <p>Динамическая генерация PAC-скриптов (Proxy Auto-Configuration) на лету. Проксирует только выбранный трафик (например, Instagram/YouTube) не замедляя работу остальных сайтов.</p>
+                </div>
+                <div class="feature-card animate delay-2">
+                    <div class="feature-icon">✨</div>
+                    <h3>Monobranding UI</h3>
+                    <p>"Apple-like" дизайн: никаких банальных системных полей ввода, строгая моно-палитра, микро-анимации на 0.2s и frosted glass blur для модальных окон.</p>
+                </div>
+                <div class="feature-card animate delay-3">
+                    <div class="feature-icon">📋</div>
+                    <h3>Smart Paste Engine</h3>
+                    <p>Автоматическое распознавание 5-ти форматов вставки (например, IP:Port:Log:Pass). Разбирает строку через RegEx и заполняет все поля за 1 миллисекунду с визуальным flash-эффектом.</p>
+                </div>
+                <div class="feature-card animate delay-1">
+                    <div class="feature-icon">📊</div>
+                    <h3>Система Телеметрии</h3>
+                    <p>Собственный модуль логирования активности. Хранит до 30 последних событий в chrome.storage. Отображает UI с геометрическими CSS-индикаторами (без сырых эмодзи).</p>
+                </div>
+                <div class="feature-card animate delay-2">
+                    <div class="feature-icon">📱</div>
+                    <h3>iOS-like Tab Engine</h3>
+                    <p>Собственный движок вкладок. Реализует overlapping crossfade (слайд-переходы между вкладками СЕТЬ, ПРАВИЛА, ЖУРНАЛ) используя только CSS-трансформации.</p>
+                </div>
+                <div class="feature-card animate delay-3">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Auto-Auth & Bypass</h3>
+                    <p>Перехват `webRequest.onAuthRequired` для работы с приватными прокси. Расширение само передает авторизационные данные в фоне — никаких всплывающих окон от браузера.</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== ARCHITECTURE ===== -->
+    <div class="container">
+        <section class="architecture-section">
+            <div class="section-label animate">Архитектура и стек</div>
+            <div class="arch-card animate delay-1">
+                <div class="arch-grid">
+                    <div class="arch-layer">
+                        <div class="arch-layer-title">UI & Design System</div>
+                        <div class="arch-item"><span class="arch-item-icon">🎨</span> Pure HTML5 & CSS3</div>
+                        <div class="arch-item"><span class="arch-item-icon">📏</span> CSS Custom Properties</div>
+                        <div class="arch-item"><span class="arch-item-icon">🔲</span> Flex/Grid Layouts</div>
+                        <div class="arch-item"><span class="arch-item-icon">👁️</span> Custom Dropdowns</div>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="arch-layer-title">Frontend Logic</div>
+                        <div class="arch-item"><span class="arch-item-icon">⚡</span> Vanilla JS (ES6+)</div>
+                        <div class="arch-item"><span class="arch-item-icon">💾</span> Chrome API Storage</div>
+                        <div class="arch-item"><span class="arch-item-icon">🔄</span> Auto-save Observers</div>
+                        <div class="arch-item"><span class="arch-item-icon">✂️</span> RegEx Content Parsers</div>
+                    </div>
+                    <div class="arch-layer">
+                        <div class="arch-layer-title">Background Runtime</div>
+                        <div class="arch-item"><span class="arch-item-icon">⚙️</span> MV3 Service Worker</div>
+                        <div class="arch-item"><span class="arch-item-icon">🚦</span> Chrome Proxy Settings</div>
+                        <div class="arch-item"><span class="arch-item-icon">🔑</span> webRequest AuthProvider</div>
+                        <div class="arch-item"><span class="arch-item-icon">📜</span> PAC Script Builder</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="container">
+        <footer class="footer">
+            <div class="footer-left">© 2026 Porta Proxy — Разработка расширений для Chrome</div>
+            <div class="footer-tech">
+                <span class="footer-badge">Vanilla JS</span>
+                <span class="footer-badge">Manifest V3</span>
+                <span class="footer-badge">PAC Scripts</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ===== SCROLL ANIMATIONS ===== -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.animationPlayState = 'running';
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.animate').forEach(el => {
+                el.style.animationPlayState = 'paused';
+                observer.observe(el);
+            });
+        });
+    </script>
+
+</body>
+</html>
