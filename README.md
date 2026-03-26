@@ -17,13 +17,6 @@
 
 ![Full Showcase](f_38169c5617235e33.png)
 
-## 📸 Screenshots
-
-| Proxy Configuration | Domain Routing | Telemetry Log | FAQ Modal |
-|:---:|:---:|:---:|:---:|
-| ![Config](1.png) | ![Rules](2.png) | ![Log](3.png) | ![FAQ](4.png) |
-
----
 
 ## ✨ Key Features
 
