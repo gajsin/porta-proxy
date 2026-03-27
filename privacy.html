@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porta Proxy — Privacy Policy</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0b;
+            color: #e4e4e7;
+            line-height: 1.8;
+            padding: 60px 20px;
+        }
+        .container {
+            max-width: 720px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 8px;
+        }
+        .update-date {
+            font-size: 13px;
+            color: #71717a;
+            margin-bottom: 40px;
+        }
+        h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #F47B6A;
+            margin-top: 36px;
+            margin-bottom: 12px;
+        }
+        p, li {
+            font-size: 15px;
+            color: #a1a1aa;
+            margin-bottom: 12px;
+        }
+        ul {
+            padding-left: 24px;
+            margin-bottom: 16px;
+        }
+        li { margin-bottom: 6px; }
+        code {
+            background: #1e1e24;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: #F47B6A;
+        }
+        a { color: #F47B6A; }
+        .footer {
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px solid #27272a;
+            font-size: 13px;
+            color: #52525b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Privacy Policy</h1>
+        <p class="update-date">Last updated: March 27, 2026</p>
+
+        <p>Porta Proxy ("the Extension") is a Chrome browser extension that manages proxy server settings and enables selective domain routing. This Privacy Policy describes how the Extension handles user data.</p>
+
+        <h2>1. Data Collection</h2>
+        <p><strong>Porta Proxy does NOT collect, transmit, or share any personal data.</strong></p>
+        <p>The Extension stores only the following configuration data locally on your device using Chrome's <code>chrome.storage.local</code> API:</p>
+        <ul>
+            <li>Proxy server address (IP/host) and port</li>
+            <li>Proxy authentication credentials (login and password)</li>
+            <li>Routing mode preference (all sites or selected sites)</li>
+            <li>List of selected domain names for routing</li>
+            <li>Activity log entries (up to 30 most recent events)</li>
+        </ul>
+        <p>All of this data is stored <strong>exclusively on your local device</strong> and is never transmitted to any external server, analytics service, or third party.</p>
+
+        <h2>2. Permissions Justification</h2>
+        <p>The Extension requires the following Chrome permissions:</p>
+        <ul>
+            <li><code>proxy</code> — Required to configure Chrome's proxy settings (fixed server mode and PAC scripts for selective routing).</li>
+            <li><code>storage</code> — Required to save your proxy configuration locally so settings persist between browser sessions.</li>
+            <li><code>webRequest</code> — Required to monitor network activity for the activity log feature and to detect proxy connection errors.</li>
+            <li><code>webRequestAuthProvider</code> — Required to automatically handle proxy authentication challenges so users don't see browser login popups.</li>
+            <li><code>host_permissions: &lt;all_urls&gt;</code> — Required because the proxy manager must be able to intercept and route ALL web traffic through the configured proxy server. The Extension cannot know in advance which URLs the user will visit, therefore access to all URLs is necessary for core functionality.</li>
+        </ul>
+
+        <h2>3. Third-Party Services</h2>
+        <p>Porta Proxy does not integrate with any third-party analytics, tracking, or advertising services. The Extension does not make any network requests of its own — it only configures Chrome's built-in proxy mechanism.</p>
+
+        <h2>4. Data Security</h2>
+        <p>Your proxy credentials and configuration are stored using Chrome's built-in storage API, which is sandboxed to this Extension only. No other extensions or websites can access this data.</p>
+
+        <h2>5. Data Deletion</h2>
+        <p>You can delete all stored data at any time by:</p>
+        <ul>
+            <li>Clearing the activity log via the "ОЧИСТИТЬ" button in the Extension</li>
+            <li>Uninstalling the Extension (removes all stored data automatically)</li>
+        </ul>
+
+        <h2>6. Changes to This Policy</h2>
+        <p>We may update this Privacy Policy from time to time. Any changes will be reflected by updating the "Last updated" date at the top of this page.</p>
+
+        <h2>7. Contact</h2>
+        <p>If you have questions about this Privacy Policy, please open an issue on our GitHub repository or contact us at the email address listed on the Chrome Web Store listing.</p>
+
+        <div class="footer">
+            © 2026 Porta Proxy. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>
